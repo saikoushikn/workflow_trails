@@ -33,7 +33,7 @@ jobs:
           node-version: '12'
           
  validate:
-    name: Scratchorg creation and package installation
+    name: ScratchOrg Creation
     needs: [environment-setup]
     runs-on: ubuntu-latest
     # if: github.event == 'push'
