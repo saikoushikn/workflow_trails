@@ -78,7 +78,7 @@ jobs:
         
       # Generate scratch org User and password
       - name: 'Create user'
-        run: sfdx force:user:create --definitionfile=config/user-def.json --setalias=new-user
+        run: sfdx force:user:create --definition-file=config/user-def.json --setalias=new-user
         
       - name: Change password
         run: sfdx force:user:password:generate --targetusername=new-user
