@@ -78,10 +78,10 @@ jobs:
         
       # Generate scratch org User and password        
       - name: Change password
-        run: sfdx force:user:password:generate --targetusername=new-user
+        run: sfdx force:user:password:generate --target-org=new-user
                                    
       - name: Display user information
         id: display_user
-        run: sfdx force:user:display --targetusername=new-user --json
+        run: sfdx force:user:display --target-org=new-user --json
         
     
