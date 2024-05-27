@@ -1,5 +1,5 @@
 # Unique name for this workflow
-name: ScratchOrg Creation
+name: ScratchOrg Creation with Namespace
 
 # Definition when the workflow should run
 
