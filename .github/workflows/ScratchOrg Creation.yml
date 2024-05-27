@@ -1,11 +1,12 @@
 # Unique name for this workflow
 name: ScratchOrg Creation
+
 # Definition when the workflow should run
 
 on:
   workflow_dispatch:
     inputs:
-     scratch-org_name: 
+     scratch-org_name:
       #friendly name to the scratch-org which needs to be created
       default: 'scratch-org'
       required: true
@@ -14,32 +15,32 @@ on:
 
 jobs:
 
-  environment-setup:
+ environment-setup:
+ 
     name: environment-setup
     runs-on: ubuntu-latest
-
+   
     steps:
-
+   
       # Checkout the source code
       - name: 'Checkout source code'
         uses: actions/checkout@v2
-
+       
       # Cache node_modules to speed up the process
       - name: Setup Node Environment
         uses: actions/setup-node@v2-beta
         with:
           node-version: '12'
-  validate:
-    name: Scratchorg creation and package installation
+         
+ validate:
+    name: ScratchOrg Creation
     needs: [environment-setup]
     runs-on: ubuntu-latest
     # if: github.event == 'push'
     steps:
-
+   
     # Install Salesforce CLI
-      - name: Install Salesforce CLI
-        env:
-          GITHUB_PATH: ~/Git/bin
+      - name: 'Install Salesforce CLI'
         run: |
               wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
               sudo mkdir ~/sfdx-cli
@@ -48,43 +49,38 @@ jobs:
               echo "~/sfdx-cli/bin" >> $GITHUB_PATH
               sudo chmod -R 777 ~/sfdx-cli
               sfdx --version
+           
     # Run Salesforce CLI Scanner For Security checks
       - name: 'Check for SFDX Update'
         run: sfdx update
-
-    # Install Salesforce SFDX Scanner
-      - name: 'Install Salesforce SFDX Scanner'
+       
+    # Install Salesforce CLI Scanner
+      - name: 'Install Salesforce CLI Scanner'
         run: sfdx plugins:install @salesforce/sfdx-scanner
 
     # Checkout the source code
       - name: 'Checkout source code'
-        uses: actions/checkout@v2 
-        
+        uses: actions/checkout@v2
+
     # Connect with Salesforce ORG
       - name: 'Connect with Salesforce ORG'
         working-directory: .github/jwt/
-        run: sfdx auth:jwt:grant --clientid ${{ secrets.DEV_HUB_CONSUMER_KEY }} --jwtkeyfile server.key --username ${{ secrets.DEV_HUB_ORG_USERNAME }} -d --instanceurl ${{ secrets.LOGIN_URL }}
-        
+        run: sfdx auth:jwt:grant --clientid ${{ secrets.DEV_HUB_CONSUMER_KEY }} --jwtkeyfile server.key --username ${{ secrets.DEV_HUB_ORG_USERNAME}} -d --instanceurl ${{ secrets.LOGIN_URL }}
+       
      # Run Salesforce CLI Scanner For Security checks _
       - name: 'List All ORGS'
         run: sfdx force:org:list
-  
+ 
       # Create scratch org
       - name: 'Create scratch org'
         run: |
-             echo 'y' | sfdx sf org create scratch --target-dev-hub ${{ secrets.DEV_HUB_ORG_USERNAME }} --definition-file config/project-scratch-def.json --set-default --no-namespace --duration-days 30 --name ${{github.event.inputs.scratch-org_name}}
-        
-      # Generate scratch org User and password
-      - name: 'Create user'
-        run:  sfdx force:user:create --definitionfile config/user-def.json --setalias new-user
-            
-        
+             echo 'y' | sfdx sf org create scratch --target-dev-hub ${{ secrets.DEV_HUB_ORG_USERNAME }} --definition-file config/project-scratch-def.json --alias myscratchorg --set-default --no-namespace --duration-days 30 --name ${{github.event.inputs.scratch-org_name}}
+       
+      # Generate scratch org User and password        
       - name: Change password
-        run: sfdx force:user:password:generate --targetusername=new-user
+        run: sfdx org generate password --target-org myscratchorg
                                    
       - name: Display user information
         id: display_user
-        run: sfdx force:user:display --targetusername=new-user --json
-
-        
-    
+        run: sfdx org display user --target-org myscratchorg
+       
