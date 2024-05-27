@@ -71,10 +71,11 @@ jobs:
       - name: 'List All ORGS'
         run: sfdx force:org:list
  
-      # Create scratch org
+    # Create scratch org
       - name: 'Create scratch org'
         run: |
-             echo 'y' | sfdx sf org create scratch --target-dev-hub ${{ secrets.DEV_HUB_ORG_USERNAME }} --definition-file config/project-scratch-def.json --alias myscratchorg --set-default --namespace RhythmTest --duration-days 30 --name ${{github.event.inputs.scratch-org_name}}
+          echo 'y' | sfdx force:org:create --type scratch --targetdevhubusername ${{ secrets.DEV_HUB_ORG_USERNAME }} --definitionfile config/project-scratch-def.json --setalias myscratchorg --setdefaultusername --durationdays 30 --setnamespace RhythmTest --setname ${{ github.event.inputs.scratch-org_name }}
+
        
       # Generate scratch org User and password        
       - name: Change password
