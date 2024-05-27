@@ -91,7 +91,7 @@ jobs:
      # Create scratch org
       - name: 'Create scratch org'
         run: |
-          echo 'y' | sfdx force:org:create --type scratch --targetdevhubusername ${{ secrets.DEV_HUB_ORG_USERNAME }} --definitionfile config/project-scratch-def.json --setalias myscratchorg --durationdays 30 --setalias scratchorgTest
+          echo 'y' | sfdx force:org:create --type scratch --targetdevhubusername ${{ secrets.DEV_HUB_ORG_USERNAME }} --definitionfile config/project-scratch-def.json --setalias myscratchorg --durationdays 30 
 
       # Generate scratch org User and password        
       - name: Change password
