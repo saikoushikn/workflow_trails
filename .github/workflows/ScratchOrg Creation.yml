@@ -65,17 +65,35 @@ jobs:
     # Connect with Salesforce ORG
       - name: 'Connect with Salesforce ORG'
         working-directory: .github/jwt/
-        run: sfdx auth:jwt:grant --clientid ${{ secrets.DEV_HUB_CONSUMER_KEY }} --jwtkeyfile server.key --username ${{ secrets.DEV_HUB_ORG_USERNAME}} -d --instanceurl ${{ secrets.LOGIN_URL }}
+        run: sfdx auth:jwt:grant --clientid ${{ secrets.DEVHUBCONSUMERKEY }} --jwtkeyfile server.key --username ${{ secrets.DEVHUBUSERNAME}} -d --instanceurl ${{ secrets.DEVHUBINSTANCEURL }}
        
      # Run Salesforce CLI Scanner For Security checks _
       - name: 'List All ORGS'
         run: sfdx force:org:list
+     
+      - name: 'Create Scratch Org Definition File'
+        run: |
+          mkdir -p config
+          echo '{
+            "orgName": "My Scratch Org",
+            "edition": "Developer",
+            "namespace": "RhythmTest",
+            "features": [],
+            "settings": {
+              "lightningExperienceSettings": {
+                "enableS1DesktopEnabled": true
+              },
+              "mobileSettings": {
+                "enableS1EncryptedStoragePref2": false
+              }
+            }
+          }' > config/project-scratch-def.json
  
-     # Create scratch org
+      # Create scratch org
       - name: 'Create scratch org'
         run: |
-          echo 'y' | sfdx force:org:create --type scratch --targetdevhubusername ${{ secrets.DEV_HUB_ORG_USERNAME }} --definitionfile config/project-scratch-def.json --setalias myscratchorg --durationdays 30 --setnamespace RhythmTest --setalias scratchorgTest
-
+             echo 'y' | sfdx sf org create scratch --target-dev-hub ${{ secrets.DEVHUBUSERNAME }} --definition-file config/project-scratch-def.json --alias myscratchorg --set-default --duration-days 30 --name ${{github.event.inputs.scratch-org_name}}
+       
       # Generate scratch org User and password        
       - name: Change password
         run: sfdx org generate password --target-org myscratchorg
