@@ -10,6 +10,12 @@ on:
       #friendly name to the scratch-org which needs to be created
       default: 'scratch-org'
       required: true
+     scratch-org_username:
+      default: 'username@dextara.com'
+      required: true
+     scratch-org_email:
+      default: 'personemail@dextara.com'
+      required: true
 
 # Jobs to be executed
 
@@ -33,14 +39,16 @@ jobs:
           node-version: '12'
           
  validate:
-    name: ScratchOrg Creation
+    name: Scratchorg creation
     needs: [environment-setup]
     runs-on: ubuntu-latest
     # if: github.event == 'push'
     steps:
     
     # Install Salesforce CLI
-      - name: 'Install Salesforce CLI'
+      - name: Install Salesforce CLI
+        env:
+          GITHUB_PATH: ~/Git/bin
         run: |
               wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
               sudo mkdir ~/sfdx-cli
@@ -53,10 +61,6 @@ jobs:
     # Run Salesforce CLI Scanner For Security checks
       - name: 'Check for SFDX Update'
         run: sfdx update
-        
-    # Install Salesforce CLI Scanner
-      - name: 'Install Salesforce CLI Scanner'
-        run: sfdx plugins:install @salesforce/sfdx-scanner
 
     # Checkout the source code
       - name: 'Checkout source code'
@@ -65,7 +69,7 @@ jobs:
     # Connect with Salesforce ORG
       - name: 'Connect with Salesforce ORG'
         working-directory: .github/jwt/
-        run: sfdx auth:jwt:grant --clientid ${{ secrets.DEV_HUB_CONSUMER_KEY }} --jwtkeyfile server.key --username ${{ secrets.DEV_HUB_ORG_USERNAME}} -d --instanceurl ${{ secrets.DEV_HUB_INSTANCE_URL }}
+        run: sfdx auth:jwt:grant --clientid ${{ secrets.CONNECTED_APP_CONSUMER_KEY_DEVHUB }} --jwtkeyfile server.key --username ${{ secrets.HUB_ORG_USERNAME }} -d --instanceurl ${{ secrets.SFDC_HOST_LOGIN }}
         
      # Run Salesforce CLI Scanner For Security checks _
       - name: 'List All ORGS'
@@ -74,14 +78,11 @@ jobs:
       # Create scratch org
       - name: 'Create scratch org'
         run: |
-             echo 'y' | sfdx sf org create scratch --target-dev-hub ${{ secrets.DEV_HUB_ORG_USERNAME }} --definition-file config/project-scratch-def.json --set-default --no-namespace --duration-days 30 --name ${{github.event.inputs.scratch-org_name}}
+             echo 'y' | sfdx sf org create scratch --target-dev-hub ${{ secrets.HUB_ORG_USERNAME }} --definition-file config/project-scratch-def.json --set-default --duration-days 30 --name ${{github.event.inputs.scratch-org_name}} --username ${{github.event.inputs.scratch-org_username}} --admin-email ${{github.event.inputs.scratch-org_email}}
         
-      # Generate scratch org User and password        
       - name: Change password
-        run: sfdx force:user:password:generate --target-org=new-user
+        run: sfdx force:user:password:generate --targetusername ${{github.event.inputs.scratch-org_username}}
                                    
       - name: Display user information
         id: display_user
-        run: sfdx force:user:display --target-org=new-user --json
-        
-    
+        run: sfdx force:user:display --targetusername ${{github.event.inputs.scratch-org_username}} --json
