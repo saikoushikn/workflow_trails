@@ -1,6 +1,5 @@
 # Unique name for this workflow
-name: Rhythm - ScratchOrg Creation and Code Push
-
+name: ScratchOrg Creation
 # Definition when the workflow should run
 
 on:
