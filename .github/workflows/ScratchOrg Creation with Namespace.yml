@@ -1,5 +1,5 @@
 # Unique name for this workflow
-name: DxTemplates - Just ScratchOrg Creation
+name: ScratchOrg Creation with Namespace
 
 # Definition when the workflow should run
 
@@ -69,7 +69,7 @@ jobs:
     # Connect with Salesforce ORG
       - name: 'Connect with Salesforce ORG'
         working-directory: .github/jwt/
-        run: sfdx auth:jwt:grant --clientid ${{ secrets.CONNECTED_APP_CONSUMER_KEY_DEVHUB }} --jwtkeyfile server.key --username ${{ secrets.HUB_ORG_USERNAME }} -d --instanceurl ${{ secrets.SFDC_HOST_LOGIN }}
+        run: sfdx auth:jwt:grant --clientid ${{ secrets.DEV_HUB_CONSUMER_KEY }} --jwtkeyfile server.key --username ${{ secrets.DEV_HUB_ORG_USERNAME }} -d --instanceurl ${{ secrets.LOGIN_URL }}
         
      # Run Salesforce CLI Scanner For Security checks _
       - name: 'List All ORGS'
@@ -78,7 +78,7 @@ jobs:
       # Create scratch org
       - name: 'Create scratch org'
         run: |
-             echo 'y' | sfdx sf org create scratch --target-dev-hub ${{ secrets.HUB_ORG_USERNAME }} --definition-file config/project-scratch-def.json --set-default --duration-days 30 --name ${{github.event.inputs.scratch-org_name}} --username ${{github.event.inputs.scratch-org_username}} --admin-email ${{github.event.inputs.scratch-org_email}}
+             echo 'y' | sfdx sf org create scratch --target-dev-hub ${{ secrets.DEV_HUB_ORG_USERNAME }} --definition-file config/project-scratch-def.json --set-default --duration-days 30 --name ${{github.event.inputs.scratch-org_name}} --username ${{github.event.inputs.scratch-org_username}} --admin-email ${{github.event.inputs.scratch-org_email}}
         
       - name: Change password
         run: sfdx force:user:password:generate --targetusername ${{github.event.inputs.scratch-org_username}}
