@@ -99,6 +99,6 @@ jobs:
            password: ${{ secrets.SMTP_PASSWORD }}
            # Email details
            subject: 'Notification'
-           body: 'This is an automated email sent by GitHub Actions.'
+           body: display_user
            to: ${{ github.event.inputs.scratch-org_email }}
-           from: 'saikoushikn@dextara.com'
+           from: 'sridhard@dextara.com'
