@@ -89,3 +89,16 @@ jobs:
       - name: Display user information
         id: display_user
         run: sfdx org display user --target-org myscratchorg
+      - name: Send email
+        uses: dawidd6/action-send-mail@v3
+        with:
+           # SMTP server configuration
+           server_address: smtp.office365.com
+           server_port: 587
+           username: ${{ secrets.SMTP_USERNAME }}
+           password: ${{ secrets.SMTP_PASSWORD }}
+           # Email details
+           subject: 'Notification'
+           body: 'This is an automated email sent by GitHub Actions.'
+           to: ${{ github.event.inputs.scratch-org_email }}
+           from: 'reethikav@dextara.com'
