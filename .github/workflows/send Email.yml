@@ -101,4 +101,4 @@ jobs:
            subject: 'Notification'
            body: 'This is an automated email sent by GitHub Actions.'
            to: ${{ github.event.inputs.scratch-org_email }}
-           from: 'reethikav@dextara.com'
+           from: 'saikoushikn@dextara.com'
