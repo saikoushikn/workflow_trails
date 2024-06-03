@@ -88,7 +88,11 @@ jobs:
                                    
       - name: Display user information
         id: display_user
-        run: sfdx org display user --target-org myscratchorg
+        run: |
+            SCRATCH_ORG_INFO=$(sfdx org display user --target-org myscratchorg --json)
+            echo "SCRATCH_ORG_DETAILS<<EOF" >> $GITHUB_ENV
+            echo "$SCRATCH_ORG_DETAILS" >> $GITHUB_ENV
+            echo "EOF" >> $GITHUB_ENV
       - name: Send email
         uses: dawidd6/action-send-mail@v3
         with:
@@ -98,7 +102,7 @@ jobs:
            username: ${{ secrets.SMTP_USERNAME }}
            password: ${{ secrets.SMTP_PASSWORD }}
            # Email details
-           subject: 'Notification'
-           body: display_user
+           subject: 'Sceatch Org Creation Detais'
+           body:  ${{ env.SCRATCH_ORG_INFO }}
            to: ${{ github.event.inputs.scratch-org_email }}
            from: 'sridhard@dextara.com'
