@@ -90,8 +90,8 @@ jobs:
         id: display_user
         run: |
             SCRATCH_ORG_INFO=$(sfdx org display user --target-org myscratchorg --json)
-            echo "SCRATCH_ORG_DETAILS<<EOF" >> $GITHUB_ENV
-            echo "$SCRATCH_ORG_DETAILS" >> $GITHUB_ENV
+            echo "SCRATCH_ORG_INFO<<EOF" >> $GITHUB_ENV
+            echo "$SCRATCH_ORG_INFO" >> $GITHUB_ENV
             echo "EOF" >> $GITHUB_ENV
       - name: Send email
         uses: dawidd6/action-send-mail@v3
